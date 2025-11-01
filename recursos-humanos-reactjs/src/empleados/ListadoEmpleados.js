@@ -1,10 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { NumericFormat } from 'react-number-format';
+import { Link } from 'react-router-dom';
 
 export default function ListadoEmpleados() {
 
-    const urBase = "http://localhost:8080/rh-app/empleados"
+    const urlBase = "http://localhost:8080/rh-app/empleados"
 
     const [empleados, setEmpleados] = useState([]);
 
@@ -13,10 +14,15 @@ export default function ListadoEmpleados() {
     }, []);
 
     const cargarEmpleados = async () => {
-        const resultado = await axios.get(urBase);
+        const resultado = await axios.get(urlBase);
         console.log("Resultado cargar Empleados");
         console.log(resultado.data);
         setEmpleados(resultado.data)
+    }
+
+    const eliminarEmpleado = async (id)=>{
+        await axios.delete(`${urlBase}/${id}`);
+        cargarEmpleados();
     }
 
     return (
@@ -32,6 +38,7 @@ export default function ListadoEmpleados() {
                         <th scope="col">Empleado</th>
                         <th scope="col">Departamento</th>
                         <th scope="col">Sueldo</th>
+                        <th scope='col'>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,6 +55,18 @@ export default function ListadoEmpleados() {
                                     prefix={'$'}
                                     decimalScale={2}
                                     fixedDecimalScale /></td>
+                                    <td>
+                                        <div className='text-center'>
+                                            <Link to={`/editar/${empleado.idEmpleado}`}
+                                            className='btn btn-warning btn-sm me-3'>
+                                                Editar
+                                            </Link>
+                                            <button onClick={()=> eliminarEmpleado(empleado.idEmpleado)}
+                                                className='btn btn-danger btn-sm'>
+                                                Eliminar
+                                            </button>
+                                        </div>
+                                    </td>
                             </tr>
                         ))
                     }
